@@ -118,10 +118,14 @@ namespace RTC
 #ifdef NDEBUG
                 fprintf(stderr, "[%d.%6.6d] Timeover: processing time = %4.2f[ms]\n",
                         tv.tv_sec, tv.tv_usec, dt*1e3);
+                struct timeval tv_before_get_rtc_name, tv_after_get_rtc_name1, tv_after_get_rtc_name2;
                 for (unsigned int i=0; i< processes.size(); i++){
+                    gettimeofday(&tv_before_get_rtc_name, NULL);
                     RTC::RTObject_var rtc = RTC::RTObject::_narrow(m_comps[i]._ref);
+                    gettimeofday(&tv_after_get_rtc_name1, NULL);
                     std::string iname(rtc->get_component_profile()->instance_name);
-                    fprintf(stderr, "%s(%4.2f), ", iname.c_str(),processes[i]*1e3);
+                    gettimeofday(&tv_after_get_rtc_name2, NULL);
+                    fprintf(stderr, "%s(%4.2f)[%4.2f : %4.2f], ", iname.c_str(),processes[i]*1e3, DELTA_SEC2(tv_before_get_rtc_name, tv_after_get_rtc_name1), DELTA_SEC2(tv_after_get_rtc_name1, tv_after_get_rtc_name2));
                 }
                 fprintf(stderr, "\n");
 #endif
